@@ -25,6 +25,8 @@ data_set = {'left':[[0]*times for i in range(4)], 'right':[[0]*times for i in ra
 pub_list = {}
 pub_list_raw = {}
 
+user_id = "None"
+
 def vector_length(v):
     return math.sqrt(v[0]*v[0]+v[1]*v[1]+v[2]*v[2])
 
@@ -156,6 +158,10 @@ def track_one_arm(shoulder, shoulder_x, elbow, hand, torso, head, base, listener
     pub_list[limb_name+'_e0'].publish(radius_e0)
     pub_list[limb_name+'_e1'].publish(radius_e1)
 
+def user_track_callback(msg):
+    global user_id
+    user_id = msg.data
+    print("setting user_id to " + msg.data)
 
 def talker():
     global pub_list_raw, pub_list
@@ -186,8 +192,10 @@ def talker():
     # Changed frame id's to match cob_body_tracker tf data
     # Need to add a function to choose a user from the skeletons being tracked
     # i.e. it will not always be user_7!
-    user_tracker = UserTracker()
-    user_tracker.run()
+
+    user_tracker = rospy.Subscriber("user_tracking",
+                                    String,
+                                    user_track_callback)
     
     cob_prefix = '/cob_body_tracker/'
     
@@ -216,13 +224,8 @@ def talker():
         limb_2_name = 'left'
     
     while not rospy.is_shutdown():
-        user_id = user_tracker.get_user()
-
-        if user != None:
-        
+        if user_id != "None":
             prefix = cob_prefix + user_id
-            print(prefix + torso)
-        
             track_one_arm(prefix + for_my_left_shoulder
                          ,prefix + for_my_left_shoulder_x
                          ,prefix + for_my_left_elbow
