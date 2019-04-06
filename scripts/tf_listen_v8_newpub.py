@@ -13,6 +13,7 @@ import turtlesim.srv
 import math
 import baxter_interface
 from baxter_interface import CHECK_VERSION
+from tf_user_tracker import UserTracker
 
 import operator
 
@@ -185,22 +186,23 @@ def talker():
     # Changed frame id's to match cob_body_tracker tf data
     # Need to add a function to choose a user from the skeletons being tracked
     # i.e. it will not always be user_7!
+    user_tracker = UserTracker()
+    user_tracker.run()
     
     cob_prefix = '/cob_body_tracker/'
-    user_prefix = 'user_7/'
     
-    for_my_left_shoulder = cob_prefix + user_prefix + 'right_shoulder'
-    for_my_left_shoulder_x =  cob_prefix + user_prefix + 'left_shoulder'
-    for_my_left_elbow =  cob_prefix + user_prefix + 'right_elbow'
-    for_my_left_hand =  cob_prefix + user_prefix + 'right_hand'
+    for_my_left_shoulder = '/right_shoulder'
+    for_my_left_shoulder_x = '/left_shoulder'
+    for_my_left_elbow = '/right_elbow'
+    for_my_left_hand = '/right_hand'
     
-    for_my_right_shoulder =  cob_prefix + user_prefix + 'left_shoulder'
-    for_my_right_shoulder_x =  cob_prefix + user_prefix + 'right_shoulder'
-    for_my_right_elbow =  cob_prefix + user_prefix + 'left_elbow'
-    for_my_right_hand =  cob_prefix + user_prefix + 'left_hand'
+    for_my_right_shoulder = '/left_shoulder'
+    for_my_right_shoulder_x = '/right_shoulder'
+    for_my_right_elbow = '/left_elbow'
+    for_my_right_hand = '/left_hand'
     
-    head =  cob_prefix + user_prefix + 'head'
-    torso =  cob_prefix + user_prefix + 'torso'
+    head = '/head'
+    torso = '/torso'
     base = 'camera_depth_optical_frame'
     
     rospy.sleep(5)
@@ -214,25 +216,31 @@ def talker():
         limb_2_name = 'left'
     
     while not rospy.is_shutdown():
+        user_id = user_tracker.get_user()
 
-        track_one_arm(for_my_left_shoulder
-                        ,for_my_left_shoulder_x
-                        ,for_my_left_elbow
-                        ,for_my_left_hand
-                        ,torso
-                        ,head
-                        ,base
-                        ,listener
-                        ,limb_1_name)
-        track_one_arm(for_my_right_shoulder
-                        ,for_my_right_shoulder_x
-                        ,for_my_right_elbow
-                        ,for_my_right_hand
-                        ,torso
-                        ,head
-                        ,base
-                        ,listener
-                        ,limb_2_name)
+        if user != None:
+        
+            prefix = cob_prefix + user_id
+            print(prefix + torso)
+        
+            track_one_arm(prefix + for_my_left_shoulder
+                         ,prefix + for_my_left_shoulder_x
+                         ,prefix + for_my_left_elbow
+                         ,prefix + for_my_left_hand
+                         ,prefix + torso
+                         ,prefix + head
+                         ,base
+                         ,listener
+                         ,limb_1_name)
+            track_one_arm(prefix + for_my_right_shoulder
+                         ,prefix + for_my_right_shoulder_x
+                         ,prefix + for_my_right_elbow
+                         ,prefix + for_my_right_hand
+                         ,prefix + torso
+                         ,prefix + head
+                         ,base
+                         ,listener
+                         ,limb_2_name)
 
         rate.sleep()
 
