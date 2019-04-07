@@ -1,4 +1,4 @@
-#!/usr/bin/env python  
+#!/usr/bin/env python
 import roslib
 roslib.load_manifest('kinect_based_arm_tracking')
 import rospy
@@ -12,22 +12,27 @@ from baxter_interface import CHECK_VERSION
 
 import operator
 
-#shoulder_a is the shoulder of the intested arm
+# shoulder_a is the shoulder of the intested arm
 
+'''
+    This script sets a subscriber for each joint and when a subscriber receives a message it sets a corresponding
+    element in the "command" dictionary, the main function also updates baxters arm joints with data from the
+    command dictionary to corresponding joints every 1/10th of a second
+'''
 
-command= {"left":[0.0]*4, "right":[0.0]*4}
+command = {"left": [0.0]*4, "right": [0.0]*4}
+
 
 def call_back_gen(limb_name, index):
     global command
+
     def call_back_func(f):
         global command
-        print limb_name
-        print index
-        print command
+        # print limb_name
+        # print index
+        # print command
         command[limb_name][index] = f.data
     return call_back_func
-
-
 
 
 if __name__ == '__main__':
@@ -49,10 +54,8 @@ if __name__ == '__main__':
     rospy.Subscriber("right_e0", Float64, call_back_gen('right', 2))
     rospy.Subscriber("right_e1", Float64, call_back_gen('right', 3))
 
-    
     rospy.sleep(5)
     rate = rospy.Rate(10.0)
-    
 
     while not rospy.is_shutdown():
         angles = left_limb.joint_angles()
@@ -64,7 +67,7 @@ if __name__ == '__main__':
         angles['left_w1'] = 0
         angles['left_w2'] = 0
     
-        #print angles
+        # print angles
         left_limb.set_joint_positions(angles)
         
         angles = right_limb.joint_angles()
