@@ -67,9 +67,9 @@ add_message_files(
 # )
 
 ## Generate added messages and services with any dependencies listed here
-#generate_messages(
-#  DEPENDENCIES std_msgs
-#)
+generate_messages(
+  DEPENDENCIES std_msgs
+)
 
 ###################################
 ## catkin specific configuration ##
@@ -85,7 +85,7 @@ catkin_package(
 #  LIBRARIES kinect_based_arm_tracking
 #  CATKIN_DEPENDS geometry_msgs roscpp rospy sensor_msgs tf
 #  DEPENDS system_lib
-   CATKING_DEPENDS message_runtime
+#  CATKING_DEPENDS message_runtime
 )
 
 ###########
