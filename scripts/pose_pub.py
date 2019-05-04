@@ -25,6 +25,7 @@ data_set = {'left':[[0]*times for i in range(4)], 'right':[[0]*times for i in ra
 #new for v8
 pub_list = {}
 pub_list_raw = {}
+pose_dict = {}
 
 user_id = "None"
 
@@ -149,15 +150,16 @@ def track_one_arm(shoulder, shoulder_x, elbow, hand, torso, head, base, listener
     radius_e0 = command[2]
     radius_e1 = command[3]
         
-    print radius_s0, radius_s1, radius_e0, radius_e1
+    #print radius_s0, radius_s1, radius_e0, radius_e1
+    pose_dict[limb_name+'_s0'] = radius_s0
+    pose_dict[limb_name+'_s1'] = radius_s1
+    pose_dict[limb_name+'_e0'] = radius_e0
+    pose_dict[limb_name+'_e1'] = radius_e1
 
-    print "haha"
-    pub_list[limb_name+'_s0'].publish(radius_s0)
-    print "hehe"
-
-    pub_list[limb_name+'_s1'].publish(radius_s1)
-    pub_list[limb_name+'_e0'].publish(radius_e0)
-    pub_list[limb_name+'_e1'].publish(radius_e1)
+    #pub_list[limb_name+'_s0'].publish(radius_s0)
+    #pub_list[limb_name+'_s1'].publish(radius_s1)
+    #pub_list[limb_name+'_e0'].publish(radius_e0)
+    #pub_list[limb_name+'_e1'].publish(radius_e1)
 
 def user_track_callback(msg):
     global user_id
@@ -171,23 +173,23 @@ def talker():
     pub_pose = rospy.Publisher('bax_pose', baxterpose, queue_size=10)
 
     #pub part
-    pub_left_s0 = rospy.Publisher('left_s0', Float64, queue_size=10)
-    pub_left_s1 = rospy.Publisher('left_s1', Float64, queue_size=10)
-    pub_left_e0 = rospy.Publisher('left_e0', Float64, queue_size=10)
-    pub_left_e1 = rospy.Publisher('left_e1', Float64, queue_size=10)
+    #pub_left_s0 = rospy.Publisher('left_s0', Float64, queue_size=10)
+    #pub_left_s1 = rospy.Publisher('left_s1', Float64, queue_size=10)
+    #pub_left_e0 = rospy.Publisher('left_e0', Float64, queue_size=10)
+    #pub_left_e1 = rospy.Publisher('left_e1', Float64, queue_size=10)
 
-    pub_right_s0 = rospy.Publisher('right_s0', Float64, queue_size=10)
-    pub_right_s1 = rospy.Publisher('right_s1', Float64, queue_size=10)
-    pub_right_e0 = rospy.Publisher('right_e0', Float64, queue_size=10)
-    pub_right_e1 = rospy.Publisher('right_e1', Float64, queue_size=10)
-    pub_list = {'left_s0':pub_left_s0,
-                'left_s1':pub_left_s1,
-                'left_e0':pub_left_e0,
-                'left_e1':pub_left_e1,
-                'right_s0':pub_right_s0,
-                'right_s1':pub_right_s1,
-                'right_e0':pub_right_e0,
-                'right_e1':pub_right_e1}
+    #pub_right_s0 = rospy.Publisher('right_s0', Float64, queue_size=10)
+    #pub_right_s1 = rospy.Publisher('right_s1', Float64, queue_size=10)
+    #pub_right_e0 = rospy.Publisher('right_e0', Float64, queue_size=10)
+    #pub_right_e1 = rospy.Publisher('right_e1', Float64, queue_size=10)
+    #pub_list = {'left_s0':pub_left_s0,
+    #            'left_s1':pub_left_s1,
+    #            'left_e0':pub_left_e0,
+    #            'left_e1':pub_left_e1,
+    #            'right_s0':pub_right_s0,
+    #            'right_s1':pub_right_s1,
+    #            'right_e0':pub_right_e0,
+    #            'right_e1':pub_right_e1}
 
     #tf part
     listener = tf.TransformListener()
@@ -227,6 +229,7 @@ def talker():
         limb_2_name = 'left'
     
     while not rospy.is_shutdown():
+        print(pose_dict)
         if user_id != "None":
             prefix = cob_prefix + user_id
             track_one_arm(prefix + for_my_left_shoulder
@@ -247,7 +250,7 @@ def talker():
                          ,base
                          ,listener
                          ,limb_2_name)
-
+            pub_pose.publish(pose_dict)
         rate.sleep()
 
 if __name__ == '__main__':
