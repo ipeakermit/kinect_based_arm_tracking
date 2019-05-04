@@ -10,6 +10,7 @@ find_package(catkin REQUIRED COMPONENTS
   rospy
   sensor_msgs
   tf
+  message_generation
 )
 
 ## System dependencies are found with CMake's conventions
@@ -46,11 +47,10 @@ find_package(catkin REQUIRED COMPONENTS
 ##   * add every package in MSG_DEP_SET to generate_messages(DEPENDENCIES ...)
 
 ## Generate messages in the 'msg' folder
-# add_message_files(
-#   FILES
-#   Message1.msg
-#   Message2.msg
-# )
+add_message_files(
+  FILES
+  baxterpose.msg
+)
 
 ## Generate services in the 'srv' folder
 # add_service_files(
@@ -67,10 +67,10 @@ find_package(catkin REQUIRED COMPONENTS
 # )
 
 ## Generate added messages and services with any dependencies listed here
-# generate_messages(
-#   DEPENDENCIES
-#   geometry_msgs#   sensor_msgs
-# )
+generate_messages(
+  DEPENDENCIES
+  std_msgs
+)
 
 ###################################
 ## catkin specific configuration ##
@@ -86,6 +86,7 @@ catkin_package(
 #  LIBRARIES kinect_based_arm_tracking
 #  CATKIN_DEPENDS geometry_msgs roscpp rospy sensor_msgs tf
 #  DEPENDS system_lib
+   CATKING_DEPENDS message_runtime
 )
 
 ###########
