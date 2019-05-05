@@ -26,6 +26,7 @@ data_set = {'left':[[0]*times for i in range(4)], 'right':[[0]*times for i in ra
 pub_list = {}
 pub_list_raw = {}
 pose_dict = {}
+pose_msg = baxterpose()
 
 user_id = "None"
 
@@ -155,6 +156,8 @@ def track_one_arm(shoulder, shoulder_x, elbow, hand, torso, head, base, listener
     pose_dict[limb_name+'_s1'] = radius_s1
     pose_dict[limb_name+'_e0'] = radius_e0
     pose_dict[limb_name+'_e1'] = radius_e1
+
+    
 
     #pub_list[limb_name+'_s0'].publish(radius_s0)
     #pub_list[limb_name+'_s1'].publish(radius_s1)
