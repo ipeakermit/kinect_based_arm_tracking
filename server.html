@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+
+<script type="text/javascript" src="http://static.robotwebtools.org/EventEmitter2/current/eventemitter2.min.js"></script>
+<script type="text/javascript" src="http://static.robotwebtools.org/roslibjs/current/roslib.min.js"></script>
+
+<script type="text/javascript" type="text/javascript">
+  // Connecting to ROS
+  // -----------------
+  
+  var ros1 = new ROSLIB.Ros({
+    // url of target machine
+    url : 'ws://localhost:9090'
+  });
+
+  var ros2 = new ROSLIB.Ros({
+      url : 'ws://localhost:9090'
+  });
+
+  // Set up connections
+  ros1.on('connection', function() {
+    console.log('Connected to ros1 websocket server.');
+  });
+
+  ros1.on('error', function(error) {
+    console.log('Error connecting to websocket server: ', error);
+  });
+
+  ros1.on('close', function() {
+    console.log('Connection to websocket server closed.');
+  });
+
+  ros2.on('connection', function() {
+    console.log('Connected to ros2 websocket server.');
+  });
+
+  ros2.on('error', function(error) {
+    console.log('Error connecting to websocket server: ', error);
+  });
+
+  ros2.on('close', function() {
+    console.log('Connection to websocket server closed.');
+  });
+  
+  // Set up bax_pose publishers
+  var posePub1 = new ROSLIB.Topic({
+      ros : ros1,
+      name : '/bax_pose',
+      messageType : 'kinect_based_arm_tracking/baxterpose'
+  });
+  
+  var posePub2 = new ROSLIB.Topic({
+      ros : ros2,
+      name : '/bax_pose',
+      messageType : 'kinect_based_arm_tracking/baxterpose'
+  });
+  
+  // Set up bax_pose_socket subscribers
+  var poseSub1 = new ROSLIB.Topic({
+    ros : ros1,
+    name : '/bax_pose_socket',
+    messageType : 'kinect_based_arm_tracking/baxterpose'
+  });
+
+  var poseSub2 = new ROSLIB.Topic({
+    ros : ros2,
+    name : '/bax_pose_socket',
+    messageType : 'kinect_based_arm_tracking/baxterpose'
+  });
+
+  // Callbacks
+  poseSub1.subscribe(function(message) {
+    posePub2.publish(message);
+  });
+  
+  poseSub2.subscribe(function(message) {
+    posePub1.publish(message);
+  });
+
+</script>
+</head>
+
+<body>
+  <p>Check Web Console for output.</p>
+</body>
+</html>
