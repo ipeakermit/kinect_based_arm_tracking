@@ -150,14 +150,23 @@ def track_one_arm(shoulder, shoulder_x, elbow, hand, torso, head, base, listener
     radius_s1 = command[1]
     radius_e0 = command[2]
     radius_e1 = command[3]
-        
-    #print radius_s0, radius_s1, radius_e0, radius_e1
-    pose_dict[limb_name+'_s0'] = radius_s0
-    pose_dict[limb_name+'_s1'] = radius_s1
-    pose_dict[limb_name+'_e0'] = radius_e0
-    pose_dict[limb_name+'_e1'] = radius_e1
 
+    if limb_name == 'left':
+        pose_msg.left_s0 = radius_s0
+        pose_msg.left_s1 = radius_s1
+        pose_msg.left_e0 = radius_e0
+        pose_msg.left_e1 = radius_e1
+    else:
+        pose_msg.right_s0 = radius_s0
+        pose_msg.right_s1 = radius_s1
+        pose_msg.right_e0 = radius_e0
+        pose_msg.right_e1 = radius_e1 
     
+    #print radius_s0, radius_s1, radius_e0, radius_e1
+    #pose_dict[limb_name+'_s0'] = radius_s0
+    #pose_dict[limb_name+'_s1'] = radius_s1
+    #pose_dict[limb_name+'_e0'] = radius_e0
+    #pose_dict[limb_name+'_e1'] = radius_e1
 
     #pub_list[limb_name+'_s0'].publish(radius_s0)
     #pub_list[limb_name+'_s1'].publish(radius_s1)
@@ -253,7 +262,7 @@ def talker():
                          ,base
                          ,listener
                          ,limb_2_name)
-            pub_pose.publish(pose_dict)
+            pub_pose.publish(pose_msg)
         rate.sleep()
 
 if __name__ == '__main__':
