@@ -1,6 +1,8 @@
 This is forked from the arm tracking project originally posted by seanshi007:
 https://github.com.seanshi007/kinect_based_arm_tracking.git
 
+Modified by: Lachlan Clulow, Minh Doan Quang, Jesse Buhagiar, Sreeja Manikyam
+
 Necessary components:
 1-2 baxter robots(real or in gazebo)
 Microsoft Kinect 2.0 or bag files with /tf data to replay
