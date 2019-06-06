@@ -33,19 +33,26 @@ import math
 import baxter_interface
 from baxter_interface import CHECK_VERSION
 from tf_user_tracker import UserTracker
-
 import operator
 
+'''
+   This class takes cob body tracker data from /tf frames and converts it to
+   Angles between key arm joints, then publishes the joint angles on a topic
+   per joint (i.e. angle for joint right_e0 is published on /right_e0_socket)
+'''
+
+# Set up global variables
 mirror = True
 times = 20
 data_set = {'left':[[0]*times for i in range(4)], 'right':[[0]*times for i in range(4)]}
-
 #new for v8
 pub_list = {}
 pub_list_raw = {}
-
 user_id = "None"
 
+'''
+   Angle matrix calculation functions below
+'''
 def vector_length(v):
     return math.sqrt(v[0]*v[0]+v[1]*v[1]+v[2]*v[2])
 
@@ -67,17 +74,23 @@ def vector_cross_product(a, b):
     r3 = a[0]*b[1]-b[0]*a[1]
     return (r1, r2, r3)
 
-def tf_2_angles(shoulder, shoulder_x, elbow, hand,  torso, head, base, listener, limb_name):
+'''
+   Converts /tf cob frames to joint angles
+'''
+def tf_2_angles(shoulder, shoulder_x, elbow, hand,  torso, head,
+                base, listener, limb_name):
     try:
         (b_2_s, trash) = listener.lookupTransform(base, shoulder, rospy.Time(0))
-        (b_2_s_x, trash) = listener.lookupTransform(base, shoulder_x, rospy.Time(0))
+        (b_2_s_x, trash) = listener.lookupTransform(base, shoulder_x,
+                                                    rospy.Time(0))
         (b_2_e, trash) = listener.lookupTransform(base, elbow, rospy.Time(0))
         (b_2_hand, trash) = listener.lookupTransform(base, hand, rospy.Time(0))
         (b_2_t, trash) = listener.lookupTransform(base, torso, rospy.Time(0))
         (b_2_head, trash) = listener.lookupTransform(base, head, rospy.Time(0))
         
         
-    except (tf.LookupException, tf.ConnectivityException, tf.ExtrapolationException):
+    except (tf.LookupException, tf.ConnectivityException,
+            tf.ExtrapolationException):
         print "tf exception"
         return {}
 
@@ -128,12 +141,17 @@ def tf_2_angles(shoulder, shoulder_x, elbow, hand,  torso, head, base, listener,
     
     
     return {"s0":radius_s0, "s1":radius_s1, "e0":radius_e0, "e1":radius_e1}
-    
-def track_one_arm(shoulder, shoulder_x, elbow, hand, torso, head, base, listener, limb_name):
+
+'''
+   Extracts one arm's joint angles from /tf and published on corresponding
+   joint topics
+'''
+def track_one_arm(shoulder, shoulder_x, elbow, hand, torso, head,
+                  base, listener, limb_name):
     global pub_list_raw, pub_list
 
-
-    d = tf_2_angles(shoulder, shoulder_x, elbow, hand, torso, head, base, listener, limb_name)
+    d = tf_2_angles(shoulder, shoulder_x, elbow, hand, torso,
+                    head, base, listener, limb_name)
         
     if d == {}:
         print "tf listen failed."
@@ -166,22 +184,28 @@ def track_one_arm(shoulder, shoulder_x, elbow, hand, torso, head, base, listener
     radius_s1 = command[1]
     radius_e0 = command[2]
     radius_e1 = command[3]
-        
-    print radius_s0, radius_s1, radius_e0, radius_e1
 
-    print "haha"
+    # Debug printout
+    # print radius_s0, radius_s1, radius_e0, radius_e1
+
     pub_list[limb_name+'_s0'].publish(radius_s0)
-    print "hehe"
-
     pub_list[limb_name+'_s1'].publish(radius_s1)
     pub_list[limb_name+'_e0'].publish(radius_e0)
     pub_list[limb_name+'_e1'].publish(radius_e1)
 
+'''
+   Callback listens on /user_tracking, sets the user_id to filter body tracking
+   results
+'''
 def user_track_callback(msg):
     global user_id
     user_id = msg.data
     print("setting user_id to " + msg.data)
 
+'''
+   Sets up publishers and subscribers and loops through tracking each of a
+   user's arms
+'''
 def talker():
     global pub_list_raw, pub_list
     rospy.init_node('v8_xnode', anonymous=True)
@@ -261,6 +285,7 @@ def talker():
                          ,limb_2_name)
 
         rate.sleep()
+
 
 if __name__ == '__main__':
     try:

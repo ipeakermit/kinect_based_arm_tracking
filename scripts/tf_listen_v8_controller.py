@@ -39,14 +39,15 @@ import operator
 command = {"left": [0.0]*4, "right": [0.0]*4}
 
 
+'''
+   Callback on joint topics, applies joint angle to command dictionary
+   This dictionary of joint angles are to be applied to baxter
+'''
 def call_back_gen(limb_name, index):
     global command
 
     def call_back_func(f):
         global command
-        # print limb_name
-        # print index
-        # print command
         command[limb_name][index] = f.data
     return call_back_func
 
