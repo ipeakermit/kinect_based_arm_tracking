@@ -37,19 +37,21 @@ class UserTracker:
     def callback(self, msg):
         user = None
         for item in msg.transforms:
-            if (item.child_frame_id.find("/cob_body_tracker/") != -1 and
+            if (item.child_frame_id.find("/cob_body_tracker") != -1 and
                 item.child_frame_id.find("/head") != -1):
                 user = item.child_frame_id.split("/")[2]
+                #print("user = "+user)
 
         if (self.time_at_user_present != None and
             time.time() - self.time_at_user_present > 10):
-            self.user_str = None
-            self.pub.publish("None")
-            self.time_at_user_present = None
+              print("no user")
+              self.user_str = None
+              self.pub.publish("None")
+              self.time_at_user_present = None
 
         if user != None:
             if self.user_str == None:
-                print("tracking " + user)
+                print("saw user " + user)
                 self.user_str = user
                 self.time_at_user_present = time.time()
                 self.pub.publish(user)

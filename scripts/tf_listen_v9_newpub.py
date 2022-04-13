@@ -65,11 +65,13 @@ def vector_cross_product(a, b):
 
 def lookupTransform(listener,f1,f2,t):
     #print 'lookupTransform '+str(f1)+' '+str(f2)+' '+str(t)
-    (xyz,ori), = listener.lookupTransform(f1, f2, t)
-    print 'lookupTransform result '+str(xyz)
+    tfresult = listener.lookupTransform(f1, f2, t)
+    print 'lookupTransform result '+str(tfresult)
+    #(xyz,ori), = tfresult
+    (xyz,ori) = tfresult
     #if xyz[2]<0.5:
     #  xyz[2]=0.5
-    return result
+    return tfresult
 
 def tf_2_angles(shoulder, shoulder_x, elbow, hand,  torso, head, base, listener, limb_name):
     try:
@@ -145,7 +147,7 @@ def track_head(head, neck, base, listener):
     pub_head.publish(dx*100.0)
     
 def track_one_arm(shoulder, shoulder_x, elbow, hand, torso, head, base, listener, limb_name):
-    print 'track_one_arm '+limb_name
+    print 'track_one_arm shoulder '+shoulder
     global pub_list_raw, pub_list
     d = tf_2_angles(shoulder, shoulder_x, elbow, hand, torso, head, base, listener, limb_name)
     if d == {}:
