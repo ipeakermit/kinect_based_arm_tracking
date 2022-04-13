@@ -1,0 +1,7 @@
+<launch>
+<node name="mimic_greeter" pkg="kinect_based_arm_tracking" type="tf_user_greeter.py"/>
+<node name="mimic_tracker" pkg="kinect_based_arm_tracking" type="tf_user_tracker.py"/>
+<node name="mimic_pub" pkg="kinect_based_arm_tracking" type="tf_listen_v8_newpub.py"/>
+<node name="mimic_controller" pkg="kinect_based_arm_tracking" type="tf_listen_v8_controller.py"/>
+<node name="video_server_simple" pkg="nas_launch" type="video_server_simple.py"/>
+</launch>

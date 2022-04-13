@@ -1,0 +1,4 @@
+<launch>
+<node name="mimic_greeter" pkg="kinect_based_arm_tracking" type="tf_user_greeter.py"/>
+<node name="video_server_simple" pkg="nas_launch" type="video_server_simple.py"/>
+</launch>
